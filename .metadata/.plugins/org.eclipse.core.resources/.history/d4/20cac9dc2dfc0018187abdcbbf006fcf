@@ -1,0 +1,49 @@
+package member_service;
+import java.util.List;
+import member.MemberDAO;
+import member.MemberBean;
+public class MemberService {
+	private MemberDAO memberDao;
+	public MemberService() {
+		memberDao = MemberDAO.getInstance();
+	}
+	
+	public boolean join(String id , String password , String name ,String email , String birth  , String address ,String phone ) {
+		if(memberDao.selectOne(id) == null) {
+			MemberBean memberbean = new MemberBean();
+			memberbean.setId(id);
+			memberbean.setPassword(password);
+			memberbean.setName(name);
+			memberbean.setEmail(email);
+			memberbean.setBirth(birth);
+			memberbean.setAddress(address);
+			memberbean.setPhone(phone);
+			memberDao.joinMember(memberbean);
+			return true;
+		}
+		else 
+			return false;
+		
+	}
+	
+	public boolean Login(String id , String password) {
+		MemberBean memberbean = memberDao.selectOne(id);
+		if(memberbean == null) {
+			return false;
+		}
+		else {
+			if(memberbean.getPassword().equals(password)) {
+				return true;
+			}
+			else
+				return false;
+		}
+	}
+	
+	 public List<MemberBean> getMemberList()
+	    {
+	        return memberDao.selectAll();
+	    }
+
+
+}

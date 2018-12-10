@@ -1,0 +1,149 @@
+package member;
+
+import member.MemberBean;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.sql.*;
+import javax.naming.*;
+import javax.swing.text.StyledEditorKit.ForegroundAction;
+public class MemberDAO {
+		private static MemberDAO instance;
+		
+		
+		public static MemberDAO getInstance() {
+			if(instance == null) instance = new MemberDAO();
+			return instance;
+		}
+		
+		private Connection conn ; 
+		private PreparedStatement pstmt = null;
+		private ResultSet rs = null;
+		private MemberDAO() {
+			try {
+				  Context init = new InitialContext();
+				    DataSource ds = (DataSource)init.lookup("java:comp/env/jdbc/leegy");
+				    conn = ds.getConnection();
+				
+			}
+			catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+		}
+		
+		public void joinMember(MemberBean bean) {
+				String sql = "INSERT INTO member_tbl VALUES (?,?,?,?,?,?,?)";
+				try {
+					pstmt = conn.prepareStatement(sql);
+					pstmt.setString(1, bean.getId());
+					pstmt.setString(2, bean.getPassword());
+					pstmt.setString(3, bean.getName());
+					pstmt.setString(4, bean.getEmail());
+					pstmt.setString(5, bean.getBirth());
+					pstmt.setString(6, bean.getAddress());
+					pstmt.setString(7, bean.getPhone());
+					pstmt.executeUpdate();
+
+				}
+				catch (Exception e) {
+					// TODO: handle exception
+					e.printStackTrace();
+				}
+				finally {
+					try {
+					if(pstmt != null && !pstmt.isClosed()) {
+						pstmt.close();
+						
+					}
+					}
+					catch (Exception e) {
+						e.printStackTrace();
+						// TODO: handle exception
+					}
+					}
+				}
+		
+		public MemberBean selectOne(String id) {
+			String sql = "SELECT id,password,name,email,birth,address,phone FROM member_tbl WHERE id = ?";
+			MemberBean memberbean = null;
+			try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1,id);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				memberbean = new MemberBean();
+				memberbean.setId(rs.getString(1));
+				memberbean.setPassword(rs.getString(2));
+				memberbean.setName(rs.getString(3));
+				memberbean.setEmail(rs.getString(4));
+				memberbean.setBirth(rs.getString(5));
+				memberbean.setAddress(rs.getString(6));
+				memberbean.setPhone(rs.getString(7));
+			}
+			}
+			catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+			finally {
+				try {
+				if(pstmt != null && !pstmt.isClosed()) {
+					pstmt.close();
+					
+				}
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+					// TODO: handle exception
+				}
+				}
+			return memberbean;
+			
+		}
+		public List<MemberBean> selectAll(){
+			String sql = "SELECT id , password , name , email, birth ,address ,phone FROM member_tbl";
+			List<MemberBean> memberList = new ArrayList<MemberBean>();
+			
+			try {
+				pstmt = conn.prepareStatement(sql);
+				rs = pstmt.executeQuery();
+				while(rs.next()) {
+					MemberBean memberbean = new MemberBean();
+					memberbean.setId( rs.getString(1));
+					memberbean.setPassword( rs.getString(2));
+					memberbean.setName( rs.getString(3));
+					memberbean.setEmail( rs.getString(4));
+					memberbean.setBirth( rs.getString(5));
+					memberbean.setAddress( rs.getString(6));
+					memberbean.setPhone( rs.getString(7));
+					memberList.add(memberbean);
+				}
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+			finally {
+				try {
+				if(pstmt != null && !pstmt.isClosed()) {
+					pstmt.close();
+					
+				}
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+					// TODO: handle exception
+				}
+				}
+			return memberList;
+			
+		}
+			
+		}
+	
+		
+		
+		
+

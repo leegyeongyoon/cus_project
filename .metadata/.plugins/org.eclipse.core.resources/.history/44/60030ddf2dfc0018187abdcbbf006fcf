@@ -1,0 +1,11 @@
+package member;
+import java.sql.SQLException;
+
+import javax.naming.*;
+import javax.sql.*;
+public class test {
+	public static void main(String[] args) {
+		System.out.println("asdasd");
+		
+}
+}
